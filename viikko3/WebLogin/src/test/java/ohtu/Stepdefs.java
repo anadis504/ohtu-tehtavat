@@ -44,8 +44,8 @@ public class Stepdefs {
         pageHasContent("Give your credentials to login");
     }    
     
-    @When("username {string} and password {string} are given")
-    public void usernameAndPasswordAreGiven(String username, String password) throws Throwable {
+    @When("nonexistent username {string} and password {string} are entered")
+    public void nonExistentUsernameAndPasswordAreGiven(String username, String password) throws Throwable {
         logInWith(username, password);
     }   
     
