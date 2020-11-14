@@ -30,8 +30,10 @@ public class AuthenticationService {
             status.addError("username is already taken");
         }
 
-        if (username.length()<3 ) {
-            status.addError("username should have at least 3 characters");
+        invalid(username, password, status);
+        
+        if (!password.equals(passwordConfirmation)) {
+            status.addError("password and password confirmation do not match");
         }
 
         if (status.isOk()) {
@@ -39,6 +41,33 @@ public class AuthenticationService {
         }
         
         return status;
+    }
+    
+    private void invalid(String username, String password, CreationStatus status) {
+        // validity check of username and password
+        if (username.length() < 3) {
+            status.addError("username should have at least 3 characters");
+
+        }
+        char[] uname = username.toCharArray();
+        for (int i = 0; i < uname.length; i++) {
+            if (!Character.isLetter(uname[i]) && !Character.isLowerCase(uname[i])) {
+                status.addError("username should contain only lowercase letters");
+            }
+        }
+        if (password.length() < 8) {
+            status.addError("password should have at least 8 characters");
+        }
+        boolean eipelkkakirjaimia = false;
+        char[] pw = password.toCharArray();
+        for (int i = 0; i < pw.length; i++) {
+            if (!Character.isLetter(pw[i])) {
+                eipelkkakirjaimia = true;
+            }
+        }
+        if (!eipelkkakirjaimia) {
+            status.addError("password should not consist of letters only");
+        }
     }
 
 }
