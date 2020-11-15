@@ -4,3 +4,6 @@
 [Tehtävät 2-13](https://github.com/anadis504/ohtu-2020-viikko1) (Eri repositorio)
 
 [Tehtävät 14-16](https://github.com/anadis504/ohtu-tehtavat/tree/main/viikko1/tehtavat14-16/viikko1)
+
+## [Viikko 2](https://github.com/anadis504/ohtu-tehtavat/tree/main/viikko2)
+## [Viikko 3](https://github.com/anadis504/ohtu-tehtavat/tree/main/viikko3)
