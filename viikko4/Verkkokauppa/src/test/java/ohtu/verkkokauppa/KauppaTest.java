@@ -10,15 +10,15 @@ public class KauppaTest {
     Pankki pankki;
     Varasto varasto;
     Viitegeneraattori viite;
-    
+
     @Before
     public void setUp() {
-           
+
         pankki = mock(Pankki.class);
         varasto = mock(Varasto.class);
         viite = mock(Viitegeneraattori.class);
     }
-    
+
     @Test
     public void ostoksenPaaytyttyaPankinMetodiaTilisiirtoKutsutaan() {
         // luodaan ensin mock-oliot
@@ -26,11 +26,11 @@ public class KauppaTest {
         when(viite.uusi()).thenReturn(42);
 
         // määritellään että tuote numero 1 on maito jonka hinta on 5 ja saldo 10
-        when(varasto.saldo(1)).thenReturn(10); 
+        when(varasto.saldo(1)).thenReturn(10);
         when(varasto.haeTuote(1)).thenReturn(new Tuote(1, "maito", 5));
 
         // sitten testattava kauppa 
-        Kauppa k = new Kauppa(varasto, pankki, viite);              
+        Kauppa k = new Kauppa(varasto, pankki, viite);
 
         // tehdään ostokset
         k.aloitaAsiointi();
@@ -38,56 +38,105 @@ public class KauppaTest {
         k.tilimaksu("pekka", "12345");
 
         // sitten suoritetaan varmistus, että pankin metodia tilisiirto on kutsuttu
-        verify(pankki).tilisiirto(eq("pekka"), anyInt(), eq("12345"), anyString(), eq(5));   
+        verify(pankki).tilisiirto(eq("pekka"), anyInt(), eq("12345"), anyString(), eq(5));
         // toistaiseksi ei välitetty kutsussa käytetyistä parametreista
 //        nimi, viite, tiliNumero, kaupanTili, summa
     }
-    
+
     @Test
     public void ostoksienPaaytyttyaPankinMetodiaTilisiirtoKutsutaanOikein() {
         when(varasto.saldo(2)).thenReturn(10);
         when(varasto.haeTuote(2)).thenReturn(new Tuote(2, "sukla", 10));
-        
+
         when(varasto.saldo(3)).thenReturn(10);
         when(varasto.haeTuote(3)).thenReturn(new Tuote(3, "kahvi", 7));
-        
+
         Kauppa k = new Kauppa(varasto, pankki, viite);
         k.aloitaAsiointi();
         k.lisaaKoriin(2);
         k.lisaaKoriin(3);
         k.tilimaksu("bob", "123456");
-        
-        verify(pankki).tilisiirto(eq("bob"), anyInt(), eq("123456"), anyString(), eq(17));   
+
+        verify(pankki).tilisiirto(eq("bob"), anyInt(), eq("123456"), anyString(), eq(17));
     }
-    
+
     @Test
     public void samojenOstoksienPaaytyttyaPankinMetodiaTilisiirtoKutsutaan() {
-        when(varasto.saldo(1)).thenReturn(10); 
+        when(varasto.saldo(1)).thenReturn(10);
         when(varasto.haeTuote(1)).thenReturn(new Tuote(1, "maito", 5));
 
-        Kauppa k = new Kauppa(varasto, pankki, viite);              
+        Kauppa k = new Kauppa(varasto, pankki, viite);
 
         k.aloitaAsiointi();
-        k.lisaaKoriin(1);   
+        k.lisaaKoriin(1);
         k.lisaaKoriin(1);
         k.tilimaksu("pekka", "12345");
 
-        verify(pankki).tilisiirto(eq("pekka"), anyInt(), eq("12345"), anyString(), eq(10)); 
+        verify(pankki).tilisiirto(eq("pekka"), anyInt(), eq("12345"), anyString(), eq(10));
     }
+
     @Test
     public void ostoksienPaaytyttyaPankinMetodiaTilisiirtoKutsutaanOikeinKunTuoteettaEiOle() {
         when(varasto.saldo(2)).thenReturn(10);
         when(varasto.haeTuote(2)).thenReturn(new Tuote(2, "sukla", 10));
-        
+
         when(varasto.saldo(3)).thenReturn(0);
         when(varasto.haeTuote(3)).thenReturn(new Tuote(3, "kahvi", 7));
-        
+
         Kauppa k = new Kauppa(varasto, pankki, viite);
         k.aloitaAsiointi();
         k.lisaaKoriin(2);
         k.lisaaKoriin(3);
         k.tilimaksu("bob", "123456");
-        
-        verify(pankki).tilisiirto(eq("bob"), anyInt(), eq("123456"), anyString(), eq(10));   
+
+        verify(pankki).tilisiirto(eq("bob"), anyInt(), eq("123456"), anyString(), eq(10));
     }
+
+    @Test
+    public void uusiOstoskoriOnAlustavastiTyhjä() {
+        when(viite.uusi())
+                .thenReturn(42)
+                .thenReturn(43);
+
+        when(varasto.saldo(2)).thenReturn(10);
+        when(varasto.haeTuote(2)).thenReturn(new Tuote(2, "sukla", 10));
+
+        when(varasto.saldo(3)).thenReturn(0);
+        when(varasto.haeTuote(3)).thenReturn(new Tuote(3, "kahvi", 7));
+
+        Kauppa k = new Kauppa(varasto, pankki, viite);
+        k.aloitaAsiointi();
+        k.lisaaKoriin(2);
+        k.lisaaKoriin(3);
+        k.aloitaAsiointi();
+        k.tilimaksu("bob", "123456");
+        
+        
+        verify(pankki).tilisiirto(eq("bob"), anyInt(), eq("123456"), anyString(), eq(0));
+
+        k.aloitaAsiointi();
+        k.lisaaKoriin(2);
+        k.lisaaKoriin(2);
+        k.tilimaksu("alice", "98765");
+
+        verify(pankki).tilisiirto(eq("alice"), anyInt(), eq("98765"), anyString(), eq(20));
+        verify(viite, times(2)).uusi();
+
+    }
+    
+    @Test
+    public void tuoteOnPoistettuKorista() {
+        when(varasto.saldo(3)).thenReturn(10);
+        when(varasto.haeTuote(3)).thenReturn(new Tuote(3, "kahvi", 7));
+
+        Kauppa k = new Kauppa(varasto, pankki, viite);
+        k.aloitaAsiointi();
+        k.lisaaKoriin(3);
+        k.poistaKorista(3);
+        k.tilimaksu("pekka", "2112");
+        
+        verify(varasto, times(2)).haeTuote(3);
+        verify(pankki).tilisiirto(anyString(), anyInt(), anyString(), anyString(), eq(0));
+    }
+    
 }
