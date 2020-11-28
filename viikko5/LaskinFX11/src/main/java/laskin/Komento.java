@@ -10,13 +10,8 @@ package laskin;
  * @author anadis
  */
 public abstract class Komento {
+     
+    public abstract int suorita(int edellinen, int luku);
     
-    public int tulos = 0;
-    
-    public abstract void suorita(int luku);
-    
-    public int tulos() {
-        return tulos;
-    }
-    
+    public abstract int peru();
 }

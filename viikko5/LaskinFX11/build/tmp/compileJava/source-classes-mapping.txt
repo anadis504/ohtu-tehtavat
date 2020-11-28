@@ -4,15 +4,15 @@ laskin/Sovelluslogiikka.java
  laskin.Sovelluslogiikka
 laskin/Nollaa.java
  laskin.Nollaa
-laskin/Komento.java
- laskin.Komento
-laskin/Miinus.java
- laskin.Miinus
-laskin/Plus.java
- laskin.Plus
-laskin/Komentotehdas.java
- laskin.Komentotehdas
-laskin/Tapahtumankuuntelija.java
- laskin.Tapahtumankuuntelija
 laskin/GraafinenLaskin.java
  laskin.GraafinenLaskin
+laskin/Tapahtumankuuntelija.java
+ laskin.Tapahtumankuuntelija
+laskin/Plus.java
+ laskin.Plus
+laskin/Komento.java
+ laskin.Komento
+laskin/Komentotehdas.java
+ laskin.Komentotehdas
+laskin/Miinus.java
+ laskin.Miinus

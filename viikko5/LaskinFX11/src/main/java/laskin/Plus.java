@@ -11,13 +11,21 @@ package laskin;
  */
 public class Plus extends Komento {
 
+    private int luku = 0;
+    
     public Plus() {
         super();
     }
     
     @Override
-    public void suorita(int luku) {
-        super.tulos+=luku;
+    public int suorita(int edellinen, int luku) {
+        this.luku = edellinen;
+        return edellinen+=luku;
+    }
+
+    @Override
+    public int peru() {
+        return this.luku;
     }
 
     
